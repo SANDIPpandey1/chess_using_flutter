@@ -16,6 +16,13 @@ class _GameBoardState extends State<GameBoard> {
 
   late List<List<ChessPiece?>> board;
 
+  ChessPiece? selectedPiece;
+
+  //THE row and column  index of selected piece
+
+  int selectCol = -1;
+  int selectRow = -1;
+
   @override
   void initState() {
     super.initState();
@@ -118,6 +125,18 @@ class _GameBoardState extends State<GameBoard> {
     board = newBoard;
   }
 
+  //user selected a piece
+  void selectPiece(int row, int col) {
+    //if user selected a piece
+    setState(() {
+      if (board[row][col] != null) {
+        selectedPiece = board[row][col];
+        selectRow = row;
+        selectCol = col;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,9 +152,13 @@ class _GameBoardState extends State<GameBoard> {
             int row = index ~/ 8;
             int col = index % 8;
 
+            //check if this square is selected
+            bool isSelected = selectRow == row && selectCol == col;
+
             return Square(
               isWhite: isWhite(index),
               piece: board[row][col],
+              isSelected: false,
             );
           }),
     );
