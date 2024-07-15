@@ -76,7 +76,7 @@ class _GameBoardState extends State<GameBoard> {
         isWhite: true,
         imagePath: 'lib/assets/Chess_nlt45.svg.png');
 
-    // bishops
+    // bishopss
     newBoard[0][2] = ChessPiece(
         type: ChessPieceType.bishop,
         isWhite: false,
