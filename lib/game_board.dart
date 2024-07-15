@@ -34,6 +34,7 @@ class _GameBoardState extends State<GameBoard> {
           type: ChessPieceType.pawn,
           isWhite: false,
           imagePath: 'lib/assets/Chess_plt45.svg.png');
+
       newBoard[6][i] = ChessPiece(
           type: ChessPieceType.pawn,
           isWhite: true,
