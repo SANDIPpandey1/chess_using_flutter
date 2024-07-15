@@ -6,12 +6,14 @@ class Square extends StatelessWidget {
   final bool isWhite;
   final ChessPiece? piece;
   final bool isSelected;
+  final VoidCallback? onTap;
 
   const Square({
     super.key,
     required this.isWhite,
     required this.piece,
     required this.isSelected,
+    required this.onTap,
   });
 
   @override
@@ -20,16 +22,19 @@ class Square extends StatelessWidget {
 
 //if selected square is green
     if (isSelected) {
-      squareColor = Colors.blue;
+      squareColor = Colors.green;
     } else {
       squareColor = isWhite ? forgroundColor : backgroundColor;
     }
-    return Container(
-      color: isWhite ? forgroundColor : backgroundColor,
-      child: piece != null
-          ? Image.asset(piece!.imagePath,
-              color: piece!.isWhite ? Colors.white : Colors.black)
-          : null,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        color: squareColor,
+        child: piece != null
+            ? Image.asset(piece!.imagePath,
+                color: piece!.isWhite ? Colors.white : Colors.black)
+            : null,
+      ),
     );
   }
 }

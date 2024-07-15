@@ -20,8 +20,8 @@ class _GameBoardState extends State<GameBoard> {
 
   //THE row and column  index of selected piece
 
-  int selectCol = -1;
-  int selectRow = -1;
+  int selectedCol = -1;
+  int selectedRow = -1;
 
   @override
   void initState() {
@@ -40,99 +40,99 @@ class _GameBoardState extends State<GameBoard> {
       newBoard[1][i] = ChessPiece(
           type: ChessPieceType.pawn,
           isWhite: false,
-          imagePath: 'lib/assets/Chess_plt45.svg.png');
+          imagePath: 'lib/assets/Chess_pdt45.svg.png');
 
       newBoard[6][i] = ChessPiece(
           type: ChessPieceType.pawn,
           isWhite: true,
-          imagePath: 'lib/assets/Chess_plt45.svg.png');
+          imagePath: 'lib/assets/Chess_pdt45.svg.png');
     }
 
     // rooks
     newBoard[0][0] = ChessPiece(
         type: ChessPieceType.rook,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_rlt45.svg.png');
+        imagePath: 'lib/assets/Chess_rdt45.svg.png');
     newBoard[0][7] = ChessPiece(
         type: ChessPieceType.rook,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_rlt45.svg.png');
+        imagePath: 'lib/assets/Chess_rdt45.svg.png');
     newBoard[7][0] = ChessPiece(
         type: ChessPieceType.rook,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_rlt45.svg.png');
+        imagePath: 'lib/assets/Chess_rdt45.svg.png');
     newBoard[7][7] = ChessPiece(
         type: ChessPieceType.rook,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_rlt45.svg.png');
+        imagePath: 'lib/assets/Chess_rdt45.svg.png');
 
     // knights
     newBoard[0][1] = ChessPiece(
         type: ChessPieceType.knight,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_nlt45.svg.png');
+        imagePath: 'lib/assets/Chess_ndt45.svg.png');
     newBoard[0][6] = ChessPiece(
         type: ChessPieceType.knight,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_nlt45.svg.png');
+        imagePath: 'lib/assets/Chess_ndt45.svg.png');
     newBoard[7][1] = ChessPiece(
         type: ChessPieceType.knight,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_nlt45.svg.png');
+        imagePath: 'lib/assets/Chess_ndt45.svg.png');
     newBoard[7][6] = ChessPiece(
         type: ChessPieceType.knight,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_nlt45.svg.png');
+        imagePath: 'lib/assets/Chess_ndt45.svg.png');
 
     // bishopss
     newBoard[0][2] = ChessPiece(
         type: ChessPieceType.bishop,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_blt45.svg.png');
+        imagePath: 'lib/assets/Chess_bdt45.svg.png');
     newBoard[0][5] = ChessPiece(
         type: ChessPieceType.bishop,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_blt45.svg.png');
+        imagePath: 'lib/assets/Chess_bdt45.svg.png');
     newBoard[7][2] = ChessPiece(
         type: ChessPieceType.bishop,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_blt45.svg.png');
+        imagePath: 'lib/assets/Chess_bdt45.svg.png');
     newBoard[7][5] = ChessPiece(
         type: ChessPieceType.bishop,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_blt45.svg.png');
+        imagePath: 'lib/assets/Chess_bdt45.svg.png');
 
     // queens
     newBoard[0][3] = ChessPiece(
         type: ChessPieceType.queen,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_qlt45.svg.png');
+        imagePath: 'lib/assets/Chess_qdt45.svg.png');
     newBoard[7][3] = ChessPiece(
         type: ChessPieceType.queen,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_qlt45.svg.png');
+        imagePath: 'lib/assets/Chess_qdt45.svg.png');
 
     // kings
     newBoard[0][4] = ChessPiece(
         type: ChessPieceType.king,
         isWhite: false,
-        imagePath: 'lib/assets/Chess_klt45.svg.png');
+        imagePath: 'lib/assets/Chess_kdt45.svg.png');
     newBoard[7][4] = ChessPiece(
         type: ChessPieceType.king,
         isWhite: true,
-        imagePath: 'lib/assets/Chess_klt45.svg.png');
+        imagePath: 'lib/assets/Chess_kdt45.svg.png');
 
     board = newBoard;
   }
 
   //user selected a piece
-  void selectPiece(int row, int col) {
+  void pieceSelected(int row, int col) {
     //if user selected a piece
     setState(() {
       if (board[row][col] != null) {
         selectedPiece = board[row][col];
-        selectRow = row;
-        selectCol = col;
+        selectedRow = row;
+        selectedCol = col;
       }
     });
   }
@@ -153,12 +153,13 @@ class _GameBoardState extends State<GameBoard> {
             int col = index % 8;
 
             //check if this square is selected
-            bool isSelected = selectRow == row && selectCol == col;
+            bool isSelected = selectedRow == row && selectedCol == col;
 
             return Square(
               isWhite: isWhite(index),
               piece: board[row][col],
-              isSelected: false,
+              isSelected: isSelected,
+              onTap: () => pieceSelected(row, col),
             );
           }),
     );
