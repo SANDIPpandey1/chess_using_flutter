@@ -382,7 +382,7 @@ class _GameBoardState extends State<GameBoard> {
     board[selectedRow][selectedCol] = null;
 
     //see king check position
-    if (isKingCheck(!isWhiteTurn)) {
+    if (iskingCheck(!isWhiteTurn)) {
       checkStatus = true;
     } else {
       checkStatus = false;
