@@ -23,6 +23,10 @@ class _GameBoardState extends State<GameBoard> {
   int selectedCol = -1;
   int selectedRow = -1;
 
+  // A list of valid moves for the currenty selected piece
+  //each move is represented as a list with 2 elements
+  List<List<int>> validMoves = [];
+
   @override
   void initState() {
     super.initState();
@@ -134,7 +138,58 @@ class _GameBoardState extends State<GameBoard> {
         selectedRow = row;
         selectedCol = col;
       }
+      validMoves =
+          calculateRawValidMoves(selectedRow, selectedCol, selectedPiece);
     });
+  }
+
+  // real valid moves
+  List<List<int>> calculateRawValidMoves(int row, int col, ChessPiece? piece) {
+    List<List<int>> candidateMoves = [];
+// different directions based on their color
+    int direction = piece!.isWhite ? -1 : 1;
+    switch (piece.type) {
+      case ChessPieceType.pawn:
+        //one square forward
+        if (isInBoard(row + direction, col) &&
+            board[row + direction][col] == null) {
+          candidateMoves.add([row + direction, col]);
+        }
+
+        //two squares forward
+        if ((row == 1 && !piece.isWhite) || (row == 6 && piece.isWhite)) {
+          if (isInBoard(row + 2 * direction, col) &&
+              board[row + direction][col] == null &&
+              board[row + 2 * direction][col] == null) {
+            candidateMoves.add([row + 2 * direction, col]);
+          }
+        }
+        //pawn can kill diagonally
+        if (isInBoard(row + direction, col - 1) &&
+            board[row + direction][col - 1] != null &&
+            board[row + direction][col - 1]!.isWhite) {
+          candidateMoves.add([row + direction, col - 1]);
+        }
+        if (isInBoard(row + direction, col + 1) &&
+            board[row + direction][col + 1] != null &&
+            board[row + direction][col + 1]!.isWhite) {
+          candidateMoves.add([row + direction, col + 1]);
+        }
+
+        break;
+      case ChessPieceType.rook:
+        break;
+      case ChessPieceType.knight:
+        break;
+      case ChessPieceType.bishop:
+        break;
+      case ChessPieceType.queen:
+        break;
+      case ChessPieceType.king:
+        break;
+      default:
+    }
+    return candidateMoves;
   }
 
   @override
@@ -155,10 +210,20 @@ class _GameBoardState extends State<GameBoard> {
             //check if this square is selected
             bool isSelected = selectedRow == row && selectedCol == col;
 
+            //check if thus square is valid move
+            bool isValidMove = false;
+            for (var position in validMoves) {
+              if (position[0] == row && position[1] == col) {
+                isValidMove = true;
+                break;
+              }
+            }
+
             return Square(
               isWhite: isWhite(index),
               piece: board[row][col],
               isSelected: isSelected,
+              isValidMoves: isValidMove,
               onTap: () => pieceSelected(row, col),
             );
           }),
