@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:chess/components/dead_piece.dart';
 import 'package:chess/components/piece.dart';
 import 'package:chess/components/square.dart';
@@ -34,6 +36,11 @@ class _GameBoardState extends State<GameBoard> {
 
   //list of black piece that is taken
   List<ChessPiece> blackTakenPieces = [];
+
+  //initial position king
+  List<int> whiteKingPosition = [7, 4];
+  List<int> blackKingPosition = [0, 4];
+  bool checkStatus = false;
 
   @override
   void initState() {
@@ -152,7 +159,8 @@ class _GameBoardState extends State<GameBoard> {
 
       // can select other piece
 
-      else if (board[row][col] != null && board[row][col]!.isWhite) {
+      else if (board[row][col] != null &&
+          board[row][col]!.isWhite == isWhiteTurn) {
         selectedPiece = board[row][col];
         selectedRow = row;
         selectedCol = col;
@@ -373,12 +381,41 @@ class _GameBoardState extends State<GameBoard> {
     board[row][col] = selectedPiece;
     board[selectedRow][selectedCol] = null;
 
+    //see king check position
+    if (isKingCheck(!isWhiteTurn)) {
+      checkStatus = true;
+    } else {
+      checkStatus = false;
+    }
+
     setState(() {
       selectedPiece = null;
       selectedRow = -1;
       selectedCol = -1;
     });
     isWhiteTurn = !isWhiteTurn;
+  }
+
+  // is king ckeck?
+  bool iskingCheck(bool isWhiteKing) {
+    List<int> kingPosition =
+        isWhiteKing ? whiteKingPosition : blackKingPosition;
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        if (board[i][j] == null || board[i][j]!.isWhite == isWhiteKing) {
+          continue;
+        }
+        List<List<int>> pieceValidMmoves =
+            calculateRawValidMoves(i, j, board[i][j]);
+
+        //check king position
+        if (pieceValidMmoves.any((move) =>
+            move[0] == kingPosition[0] && move[1] == kingPosition[1])) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   //turn
