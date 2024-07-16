@@ -179,7 +179,7 @@ class _GameBoardState extends State<GameBoard> {
         break;
       case ChessPieceType.rook:
         //horizontal and vertial direction
-        var direction = [
+        var directions = [
           [-1, 0], //up
           [1, 0], //down
           [0, -1], //left
@@ -187,25 +187,20 @@ class _GameBoardState extends State<GameBoard> {
         ];
         for (var direction in directions) {
           var i = 1;
-          while(true)
-          {
+          while (true) {
             var newRow = row + i * direction[0];
             var newCol = col + i * direction[1];
-            if(!isInBoard(newRow, newCol))
-            {
+            if (!isInBoard(newRow, newCol)) {
               break;
             }
-            if(board[newRow][newCol] != null){
-              if(board[newRow][newCol]!.isWhite 1== piece.isWhite){
+            if (board[newRow][newCol] != null) {
+              if (board[newRow][newCol]!.isWhite != piece.isWhite) {
                 candidateMoves.add([newRow, newCol]);
-              }else{
-                
+              } else {
                 break;
               }
-
             }
             candidateMoves.add([newRow, newCol]);
-
           }
         }
 
