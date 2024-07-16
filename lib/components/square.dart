@@ -24,9 +24,9 @@ class Square extends StatelessWidget {
 
 //if selected square is green
     if (isSelected) {
-      squareColor = Colors.green;
+      squareColor = Colors.blue;
     } else if (isValidMoves) {
-      squareColor = Colors.green[200];
+      squareColor = Colors.blue[200];
     } else {
       squareColor = isWhite ? forgroundColor : backgroundColor;
     }
@@ -34,6 +34,7 @@ class Square extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: squareColor,
+        margin: EdgeInsets.all(isValidMoves ? 3 : 0),
         child: piece != null
             ? Image.asset(piece!.imagePath,
                 color: piece!.isWhite ? Colors.white : Colors.black)

@@ -1,8 +1,10 @@
+import 'package:chess/components/dead_piece.dart';
 import 'package:chess/components/piece.dart';
 import 'package:chess/components/square.dart';
 import 'package:chess/helper/helper_methods.dart';
 import 'package:chess/values/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class GameBoard extends StatefulWidget {
   const GameBoard({super.key});
@@ -26,6 +28,12 @@ class _GameBoardState extends State<GameBoard> {
   // A list of valid moves for the currenty selected piece
   //each move is represented as a list with 2 elements
   List<List<int>> validMoves = [];
+
+  //list of white piece that is taken
+  List<ChessPiece> whiteTakenPieces = [];
+
+  //list of black piece that is taken
+  List<ChessPiece> blackTakenPieces = [];
 
   @override
   void initState() {
@@ -133,10 +141,24 @@ class _GameBoardState extends State<GameBoard> {
   void pieceSelected(int row, int col) {
     //if user selected a piece
     setState(() {
-      if (board[row][col] != null) {
+      //no piece selectes
+      if (selectedPiece == null && board[row][col] != null) {
+        if (board[row][col]!.isWhite == isWhiteTurn) {
+          selectedPiece = board[row][col];
+          selectedRow = row;
+          selectedCol = col;
+        }
+      }
+
+      // can select other piece
+
+      else if (board[row][col] != null && board[row][col]!.isWhite) {
         selectedPiece = board[row][col];
         selectedRow = row;
         selectedCol = col;
+      } else if (selectedPiece != null &&
+          validMoves.any((element) => element[0] == row && element[1] == col)) {
+        movePiece(row, col);
       }
       validMoves =
           calculateRawValidMoves(selectedRow, selectedCol, selectedPiece);
@@ -146,6 +168,10 @@ class _GameBoardState extends State<GameBoard> {
   // real valid moves
   List<List<int>> calculateRawValidMoves(int row, int col, ChessPiece? piece) {
     List<List<int>> candidateMoves = [];
+
+    if (piece == null) {
+      return [];
+    }
     // Different directions based on their color
     int direction = piece!.isWhite ? -1 : 1;
     switch (piece.type) {
@@ -331,41 +357,104 @@ class _GameBoardState extends State<GameBoard> {
     return row >= 0 && row < 8 && col >= 0 && col < 8;
   }
 
+  // function to move piece
+  void movePiece(int row, int col) {
+    //if new spot has enemy
+    if (board[row][col] != null) {
+      var capturedPiece = board[row][col];
+      if (capturedPiece!.isWhite) {
+        whiteTakenPieces.add(capturedPiece);
+      } else {
+        blackTakenPieces.add(capturedPiece);
+      }
+    }
+    //move thr piece and clear old spot
+
+    board[row][col] = selectedPiece;
+    board[selectedRow][selectedCol] = null;
+
+    setState(() {
+      selectedPiece = null;
+      selectedRow = -1;
+      selectedCol = -1;
+    });
+    isWhiteTurn = !isWhiteTurn;
+  }
+
+  //turn
+  bool isWhiteTurn = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: GridView.builder(
-          itemCount: 8 * 8,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 8),
-          itemBuilder: (context, index) {
-            //get row and col
+      body: Column(
+        children: [
+          //white piece that are taken
+          Expanded(
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: whiteTakenPieces.length,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
+              itemBuilder: (context, index) => DeadPiece(
+                imagePath: whiteTakenPieces[index].imagePath,
+                isWhite: true,
+              ),
+            ),
+          ),
 
-            int row = index ~/ 8;
-            int col = index % 8;
+          //chess board iin the middle
+          Expanded(
+            flex: 3,
+            child: GridView.builder(
+                itemCount: 8 * 8,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 8),
+                itemBuilder: (context, index) {
+                  //get row and col
 
-            //check if this square is selected
-            bool isSelected = selectedRow == row && selectedCol == col;
+                  int row = index ~/ 8;
+                  int col = index % 8;
 
-            //check if thus square is valid move
-            bool isValidMove = false;
-            for (var position in validMoves) {
-              if (position[0] == row && position[1] == col) {
-                isValidMove = true;
-                break;
-              }
-            }
+                  //check if this square is selected
+                  bool isSelected = selectedRow == row && selectedCol == col;
 
-            return Square(
-              isWhite: isWhite(index),
-              piece: board[row][col],
-              isSelected: isSelected,
-              isValidMoves: isValidMove,
-              onTap: () => pieceSelected(row, col),
-            );
-          }),
+                  //check if thus square is valid move
+                  bool isValidMove = false;
+                  for (var position in validMoves) {
+                    if (position[0] == row && position[1] == col) {
+                      isValidMove = true;
+                      break;
+                    }
+                  }
+
+                  return Square(
+                    isWhite: isWhite(index),
+                    piece: board[row][col],
+                    isSelected: isSelected,
+                    isValidMoves: isValidMove,
+                    onTap: () => pieceSelected(row, col),
+                  );
+                }),
+          ),
+
+          //black piece that are taken
+          Expanded(
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: blackTakenPieces.length,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8),
+              itemBuilder: (context, index) => DeadPiece(
+                imagePath: blackTakenPieces[index].imagePath,
+                isWhite: false,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
