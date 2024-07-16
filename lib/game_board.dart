@@ -221,7 +221,7 @@ class _GameBoardState extends State<GameBoard> {
         for (var move in knightMoves) {
           var newRow = row + move[0];
           var newCol = col + move[1];
-          if (isInBoard(newRow, newCol)) {
+          if (!isInBoard(newRow, newCol)) {
             continue;
           }
           if (board[newRow][newCol] != null) {
