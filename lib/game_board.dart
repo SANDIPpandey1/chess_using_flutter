@@ -167,17 +167,48 @@ class _GameBoardState extends State<GameBoard> {
         //pawn can kill diagonally
         if (isInBoard(row + direction, col - 1) &&
             board[row + direction][col - 1] != null &&
-            board[row + direction][col - 1]!.isWhite) {
+            board[row + direction][col - 1]!.isWhite != isWhite) {
           candidateMoves.add([row + direction, col - 1]);
         }
         if (isInBoard(row + direction, col + 1) &&
             board[row + direction][col + 1] != null &&
-            board[row + direction][col + 1]!.isWhite) {
+            board[row + direction][col + 1]!.isWhite != isWhite) {
           candidateMoves.add([row + direction, col + 1]);
         }
 
         break;
       case ChessPieceType.rook:
+        //horizontal and vertial direction
+        var direction = [
+          [-1, 0], //up
+          [1, 0], //down
+          [0, -1], //left
+          [0, 1] //right
+        ];
+        for (var direction in directions) {
+          var i = 1;
+          while(true)
+          {
+            var newRow = row + i * direction[0];
+            var newCol = col + i * direction[1];
+            if(!isInBoard(newRow, newCol))
+            {
+              break;
+            }
+            if(board[newRow][newCol] != null){
+              if(board[newRow][newCol]!.isWhite 1== piece.isWhite){
+                candidateMoves.add([newRow, newCol]);
+              }else{
+                
+                break;
+              }
+
+            }
+            candidateMoves.add([newRow, newCol]);
+
+          }
+        }
+
         break;
       case ChessPieceType.knight:
         break;
