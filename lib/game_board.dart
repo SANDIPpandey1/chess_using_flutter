@@ -201,11 +201,38 @@ class _GameBoardState extends State<GameBoard> {
               }
             }
             candidateMoves.add([newRow, newCol]);
+            i++;
           }
         }
 
         break;
       case ChessPieceType.knight:
+        //knight can move 2 steps in one direction and 1 step in another direction
+        var knightMoves = [
+          [-2, -1],
+          [-2, 1],
+          [2, -1],
+          [2, 1],
+          [-1, -2],
+          [-1, 2],
+          [1, -2],
+          [1, 2]
+        ];
+        for (var move in knightMoves) {
+          var newRow = row + move[0];
+          var newCol = col + move[1];
+          if (isInBoard(newRow, newCol)) {
+            continue;
+          }
+          if (board[newRow][newCol] != null) {
+            if (board[newRow][newCol]!.isWhite != piece.isWhite) {
+              candidateMoves.add([newRow, newCol]);
+            }
+            continue;
+          }
+          candidateMoves.add([newRow, newCol]);
+        }
+
         break;
       case ChessPieceType.bishop:
         break;
