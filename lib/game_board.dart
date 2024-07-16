@@ -137,20 +137,9 @@ class _GameBoardState extends State<GameBoard> {
         selectedPiece = board[row][col];
         selectedRow = row;
         selectedCol = col;
-        validMoves =
-            calculateRawValidMoves(selectedRow, selectedCol, selectedPiece);
       }
-    });
-  }
-
-  void movePiece(int newRow, int newCol) {
-    setState(() {
-      board[newRow][newCol] = selectedPiece;
-      board[selectedRow][selectedCol] = null;
-      selectedPiece = null;
-      selectedRow = -1;
-      selectedCol = -1;
-      validMoves = [];
+      validMoves =
+          calculateRawValidMoves(selectedRow, selectedCol, selectedPiece);
     });
   }
 
