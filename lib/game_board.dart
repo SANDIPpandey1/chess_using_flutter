@@ -353,6 +353,49 @@ class _GameBoardState extends State<GameBoard> {
           }
           candidateMoves.add([newRow, newCol]);
         }
+        //castle
+        //castle
+        if (!piece.isMoved && piece.isWhite) {
+          if (row == 7 && col == 4) {
+            if (board[7][7] != null &&
+                board[7][7]!.type == ChessPieceType.rook &&
+                board[7][7]!.isWhite &&
+                !board[7][7]!.isMoved &&
+                board[7][5] == null &&
+                board[7][6] == null) {
+              candidateMoves.add([7, 6]);
+            }
+            if (board[7][0] != null &&
+                board[7][0]!.type == ChessPieceType.rook &&
+                board[7][0]!.isWhite &&
+                !board[7][0]!.isMoved &&
+                board[7][1] == null &&
+                board[7][2] == null &&
+                board[7][3] == null) {
+              candidateMoves.add([7, 2]);
+            }
+          }
+        } else {
+          if (row == 0 && col == 4) {
+            if (board[0][7] != null &&
+                board[0][7]!.type == ChessPieceType.rook &&
+                !board[0][7]!.isWhite &&
+                !board[0][7]!.isMoved &&
+                board[0][5] == null &&
+                board[0][6] == null) {
+              candidateMoves.add([0, 6]);
+            }
+            if (board[0][0] != null &&
+                board[0][0]!.type == ChessPieceType.rook &&
+                !board[0][0]!.isWhite &&
+                !board[0][0]!.isMoved &&
+                board[0][1] == null &&
+                board[0][2] == null &&
+                board[0][3] == null) {
+              candidateMoves.add([0, 2]);
+            }
+          }
+        }
 
       default:
         break;
@@ -395,7 +438,25 @@ class _GameBoardState extends State<GameBoard> {
         blackTakenPieces.add(capturedPiece);
       }
     }
-    //check if the piece being moved is a king
+
+    //castle
+
+    // Handle castling
+    if (selectedPiece!.type == ChessPieceType.king &&
+        (col - selectedCol).abs() == 2) {
+      // Kingside castling
+      if (col > selectedCol) {
+        board[row][col - 1] = board[row][col + 1];
+        board[row][col + 1] = null;
+      }
+      // Queenside castling
+      else {
+        board[row][col + 1] = board[row][col - 2];
+        board[row][col - 2] = null;
+      }
+    }
+
+    // Check if the piece being moved is a king
     if (selectedPiece!.type == ChessPieceType.king) {
       if (selectedPiece!.isWhite) {
         whiteKingPosition = [row, col];
@@ -408,6 +469,9 @@ class _GameBoardState extends State<GameBoard> {
 
     board[row][col] = selectedPiece;
     board[selectedRow][selectedCol] = null;
+
+    // Mark the piece as moved
+    selectedPiece!.isMoved = true;
 
     //see king check position
     if (iskingCheck(!isWhiteTurn)) {
